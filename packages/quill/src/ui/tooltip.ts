@@ -34,6 +34,8 @@ class Tooltip {
       reference.left + reference.width / 2 - this.root.offsetWidth / 2;
     // root.scrollTop should be 0 if scrollContainer !== root
     const top = reference.bottom + this.quill.root.scrollTop;
+    var finalLeft = left;
+
     this.root.style.left = `${left}px`;
     this.root.style.top = `${top}px`;
     this.root.classList.remove('ql-flip');
@@ -43,11 +45,28 @@ class Tooltip {
     if (rootBounds.right > containerBounds.right) {
       shift = containerBounds.right - rootBounds.right;
       this.root.style.left = `${left + shift}px`;
+      finalLeft = left + shift;
     }
     if (rootBounds.left < containerBounds.left) {
       shift = containerBounds.left - rootBounds.left;
       this.root.style.left = `${left + shift}px`;
+      finalLeft = left + shift;
     }
+    if (typeof this.quill.options.tooltipMinLeft == 'number' && finalLeft < this.quill.options.tooltipMinLeft) {
+      this.root.style.left = this.quill.options.tooltipMinLeft + 'px';
+    }
+    try {
+      if (typeof this.quill.options.tooltipMaxLeftCheck == 'boolean' && this.quill.options.tooltipMaxLeftCheck) {
+        var editorBounds = this.quill.options.container.getBoundingClientRect();
+        var max_limit = editorBounds.width - rootBounds.width;
+        if (finalLeft > max_limit) {
+          this.root.style.left = max_limit + 'px';
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
     if (rootBounds.bottom > containerBounds.bottom) {
       const height = rootBounds.bottom - rootBounds.top;
       const verticalShift = reference.bottom - reference.top + height;

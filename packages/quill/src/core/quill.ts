@@ -71,6 +71,8 @@ export interface ExpandedQuillOptions
   modules: Record<string, unknown>;
   bounds?: HTMLElement | null;
   readOnly: boolean;
+  tooltipMinLeft?: number;
+  tooltipMaxLeftCheck?: boolean;
 }
 
 class Quill {
